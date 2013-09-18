@@ -99,6 +99,10 @@
   <ItemGroup>
     <None Include="ReadMe.txt" />
     <None Include="resources\fonts\arial.fnt" />
+    <None Include="resources\images\logo1.png" />
+    <None Include="resources\images\logo2.png" />
+    <None Include="resources\images\logo3.png" />
+    <None Include="resources\images\menu.jpg" />
     <None Include="resources\shaders\pixel.glsl" />
     <None Include="resources\shaders\vertex.glsl" />
   </ItemGroup>

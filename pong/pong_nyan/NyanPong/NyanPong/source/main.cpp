@@ -1,4 +1,4 @@
-// last edit 9/16/2013 - Will Gilstrap
+// last edit 9/17/2013 - Will Gilstrap
 //////////////////////////////////////////////////////////////////////////
 #define _USE_MATH_DEFINES
 
@@ -9,6 +9,10 @@
 #include <assert.h>
 #include <crtdbg.h>
 #include <ctime>
+#include <iostream>
+
+
+using namespace std;
 
 struct vector2{
 	float x;
@@ -37,15 +41,18 @@ const int PLAYER2_H = 128;
 
 const int BALL_W = 64;
 const int BALL_H = 92;
+const int NYANCAT_W = 250;
+const int NYANCAT_H = 250;
 
 
 // global variables 
 unsigned int bgImage = -1;
+//unsigned int bgMenu = -1;
 movableObject player1 = {PLAYER1_X, 100, 0, 0, -1 , PLAYER1_W, PLAYER1_H};
 movableObject player2 = {PLAYER2_X, 100, 0, 0, -1, PLAYER2_W, PLAYER2_H};
 movableObject ball = {500, 500, 5+(rand()%40)/10, 5+(rand()%50)/10, -1, BALL_W, BALL_H};
-movableObject top = {0, 0, 0, 0, -1, 1280, 10};
-movableObject bottom = {0, 780, 0, 0, -1, 1280, 10};
+movableObject top = {0, 0, 0, 0, -1, 1280, 10};	// collision pads
+movableObject bottom = {0, 780, 0, 0, -1, 1280, 10};	// collision pads
 int g_highScores[5] = {0};
 bool g_gameOver = false;
 
@@ -186,6 +193,14 @@ bool checkCollision(movableObject& obj1, movableObject& obj2) {
 void seek(movableObject &player, movableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
 
+	
+	if (player.position.y < ball.position.y) 
+			player.position.y = ball.position.y;
+	else if (player.position.y > ball.position.y)
+		player.position.y = ball.position.y;
+	else if (player.position.x < ball.position.x)
+		player.position.y = player.position.y;
+	/*
 	if(player.position.y < ball.position.y - speed) {
 		int diff = ball.position.y - player.position.y;
 		if(diff > speed)
@@ -200,6 +215,7 @@ void seek(movableObject &player, movableObject& ball){
 		else
 			player.position.y -= diff;
 	}
+	*/
 }
 
 void movePlayer(movableObject &player)
@@ -207,24 +223,19 @@ void movePlayer(movableObject &player)
 	
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y - 30);
 
-	if(IsKeyDown('S') || IsKeyDown(GLFW_KEY_DOWN)) {
+	if(IsKeyDown('S') || IsKeyDown(GLFW_KEY_DOWN) && checkCollision(player1, bottom) == false) {
 		int diff = player.position.y;
 		player.position.y += speed;
-		if (checkCollision(player1, bottom) == true)
-			player.position.y -= 10;
+		//if (checkCollision(player1, bottom) == true)
+			//player.position.y -= 10;
 	}
-	else if (IsKeyDown('W') || IsKeyDown(GLFW_KEY_UP)) {
+	else if (IsKeyDown('W') || IsKeyDown(GLFW_KEY_UP) && checkCollision(player1, top) == false) {
 		int diff = player.position.y;
 		player.position.y -= speed;
-		if (checkCollision(player1, top) == true)
-			player.position.y += 10;
+		//if (checkCollision(player1, top) == true)
+			//player.position.y += 10;
 	}
-	
-	//if (IsKeyDown('W'))
-	//	MoveSprite(player.sprite, player.position.x, player.position.y);
-	//
-	//if (IsKeyDown('S'))
-	//	MoveSprite(player.sprite, player.position.x, player.position.y);
+
 }
 
 // initialize all the variables in the game
@@ -232,6 +243,8 @@ void initGame() {
 	srand(time(0));
 
 	// Now load some sprites
+	//bgMenu = CreateSprite( "./images/menu.jpg", SCREEN_X, SCREEN_Y, true);
+	//MoveSprite(bgMenu, SCREEN_X>>1, SCREEN_Y>>1);
 	bgImage = CreateSprite( "./images/bg.jpg", SCREEN_X, SCREEN_Y, true );
 	MoveSprite(bgImage, SCREEN_X>>1, SCREEN_Y>>1);
 
@@ -243,6 +256,7 @@ void initGame() {
 
 // destroy all the sprites and clean up any memory
 void destroyGame() {
+	//DestroySprite(bgMenu);
 	DestroySprite(bgImage);
 	DestroySprite(player1.sprite);
 	DestroySprite(player2.sprite);
@@ -252,15 +266,13 @@ void destroyGame() {
 // update the game logic here
 void updateGame() {
 	updateBallPosition(ball);
-	// player 1 on auto
-	//if(ball.speed.x < 0)
 	movePlayer(player1);
 	if(ball.speed.x < 0)
 		seek(player2, ball);
 	
 	if( testOnScreen(ball) ) {
 		// ball hit side of screen
-		if(ball.position.x < 100) {
+		if(ball.position.x < 50) {
 			// player 1 lost
 			player2Score++;
 		}
@@ -344,15 +356,26 @@ void drawGame() {
 
 	DrawSprite(bgImage);
 }
-
+/*
+void drawMenu() {
+	DrawSprite(bgMenu);
+}
+*/
 // entry point of the program
 int main( int arc, char* argv[] )
 {	
 	// First we need to create our Game Framework
 	Initialise(SCREEN_X, SCREEN_Y, false );
-
+	//bool menuScreen = true;
 	initGame();
+	/*	
+	do {
+		ClearScreen();
+
+		drawMenu();
 		
+	} while (menuScreen == true);
+	*/
 	do {
 		frameCounter++;
 
