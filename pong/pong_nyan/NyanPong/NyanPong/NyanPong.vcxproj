@@ -109,6 +109,7 @@
   <ItemGroup>
     <ClInclude Include="include\AIE.h" />
     <ClInclude Include="include\KeyCodes.h" />
+    <ClInclude Include="include\pongh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp" />
