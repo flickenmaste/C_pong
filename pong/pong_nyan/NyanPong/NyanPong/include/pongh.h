@@ -1,4 +1,4 @@
-// last edit 9/18/2013 - Will Gilstrap
+// last edit 9/23/2013 - Will Gilstrap
 //////////////////////////////////////////////////////////////////////////
 #ifndef _PONGH_H_
 #define _PONGH_H_

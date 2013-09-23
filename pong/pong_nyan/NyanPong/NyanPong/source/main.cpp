@@ -1,4 +1,4 @@
-// last edit 9/18/2013 - Will Gilstrap
+// last edit 9/23/2013 - Will Gilstrap
 //////////////////////////////////////////////////////////////////////////
 #define _USE_MATH_DEFINES
 
@@ -10,6 +10,7 @@
 #include <crtdbg.h>
 #include <ctime>
 #include <iostream>
+#include <time.h>
 #include "pongh.h"
 
 using namespace std;
