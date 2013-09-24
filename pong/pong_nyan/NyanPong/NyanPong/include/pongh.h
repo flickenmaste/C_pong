@@ -1,4 +1,4 @@
-// last edit 9/23/2013 - Will Gilstrap
+// last edit 9/24/2013 - Will Gilstrap
 //////////////////////////////////////////////////////////////////////////
 #ifndef _PONGH_H_
 #define _PONGH_H_
@@ -18,7 +18,7 @@ struct vector2{
 	float y;
 };
 
-struct movableObject{
+struct moveableObject{
 	vector2 position;
 	vector2 speed;
 	int sprite;
@@ -40,23 +40,22 @@ const int PLAYER2_H = 128;
 
 const int BALL_W = 64;
 const int BALL_H = 92;
-const int NYANCAT_W = 250;
-const int NYANCAT_H = 250;
 
 
 // global variables 
 unsigned int bgImage = -1;
 //unsigned int bgMenu = -1;
-movableObject player1 = {PLAYER1_X, 100, 0, 0, -1 , PLAYER1_W, PLAYER1_H};
-movableObject player2 = {PLAYER2_X, 100, 0, 0, -1, PLAYER2_W, PLAYER2_H};
-movableObject ball = {500, 500, 5+(rand()%40)/10, 5+(rand()%50)/10, -1, BALL_W, BALL_H};
-movableObject top = {0, 0, 0, 0, -1, 1280, 10};	// collision pads
-movableObject bottom = {0, 780, 0, 0, -1, 1280, 10};	// collision pads
+moveableObject player1 = {PLAYER1_X, 100, 0, 0, -1 , PLAYER1_W, PLAYER1_H};
+moveableObject player2 = {PLAYER2_X, 100, 0, 0, -1, PLAYER2_W, PLAYER2_H};
+moveableObject ball = {500, 500, 5+(rand()%40)/10, 5+(rand()%50)/10, -1, BALL_W, BALL_H};
+moveableObject top = {0, 0, 0, 0, -1, 1280, 10};	// collision pads for paddle
+moveableObject bottom = {0, 780, 0, 0, -1, 1280, 10};	// collision pads paddle
 int g_highScores[5] = {0};
 bool g_gameOver = false;
+bool menuExit = false;
 
-int player1Score = 0;
-int player2Score = 0;
+int player1Score = 0;	// player 1 score
+int player2Score = 0;	// player 2 score
 int frameCounter = 0;
 
 /*
@@ -68,12 +67,12 @@ vector2 vectorAdd(vector2 &v, vector2 &v2);
 vector2 getNormal(vector2 &v);
 float getMagnitude(vector2 &v);
 void sort(int array[], int size);
-bool testOnScreen(movableObject& obj);
-void updateBallPosition(movableObject &obj);
-bool checkPaddleCollision(movableObject& ball, movableObject& player);
-bool checkCollision(movableObject& obj1, movableObject& obj2);
-void seek(movableObject &player, movableObject& ball);
-void movePlayer(movableObject &player);
+bool testOnScreen(moveableObject& obj);
+void updateBallPosition(moveableObject &obj);
+bool checkPaddleCollision(moveableObject& ball, moveableObject& player);
+bool checkCollision(moveableObject& obj1, moveableObject& obj2);
+void seek(moveableObject &player, moveableObject& ball);
+void movePlayer(moveableObject &player);
 void initGame();
 void destroyGame();
 void updateGame();

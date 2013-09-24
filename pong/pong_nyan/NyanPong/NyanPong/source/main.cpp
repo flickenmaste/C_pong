@@ -1,4 +1,4 @@
-// last edit 9/23/2013 - Will Gilstrap
+// last edit 9/24/2013 - Will Gilstrap
 //////////////////////////////////////////////////////////////////////////
 #define _USE_MATH_DEFINES
 
@@ -74,7 +74,7 @@ void sort(int array[], int size) {
 // if the object has gone off the screen, this function will also modify
 // the objects speed so that it will move back onto the screen
 // returns true if the object's x or y coordinate is off the screen
-bool testOnScreen(movableObject& obj){
+bool testOnScreen(moveableObject& obj){
 	if(obj.position.x > SCREEN_X) {
 		obj.speed.x *= -1;
 		return true;
@@ -95,13 +95,13 @@ bool testOnScreen(movableObject& obj){
 // updates the position of the ball
 // adds the balls current velocity to its current position to get the 
 // new position
-void updateBallPosition(movableObject &obj) {
+void updateBallPosition(moveableObject &obj) {
 	obj.position = vectorAdd(obj.position, obj.speed);
 }
 
-// check if the ball has collided with the paddle
+// check for collison of the ball and paddle
 // returns true if a collision occurred
-bool checkPaddleCollision(movableObject& ball, movableObject& player) {
+bool checkPaddleCollision(moveableObject& ball, moveableObject& player) {
 	int speed = ball.speed.x;
 	
 	int ballHalfW = ball.width>>1;
@@ -128,9 +128,9 @@ bool checkPaddleCollision(movableObject& ball, movableObject& player) {
 	return false;
 }
 
-// check if one object has collided with another object
+// check if two objects have collided with eachother
 // returns true if the two objects have collided
-bool checkCollision(movableObject& obj1, movableObject& obj2) {	
+bool checkCollision(moveableObject& obj1, moveableObject& obj2) {	
 	vector2 diff = vectorSubtract(obj1.position, obj2.position);
 	float mag = getMagnitude(diff);
 	
@@ -143,9 +143,9 @@ bool checkCollision(movableObject& obj1, movableObject& obj2) {
 	return false;
 }
 
-// the player's paddle position will be updated according the position of the ball.
+// Player 2 AI to track the ball
 // this is how we get the computer players updating their paddles
-void seek(movableObject &player, movableObject& ball){
+void seek(moveableObject &player, moveableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
 
 	
@@ -153,7 +153,7 @@ void seek(movableObject &player, movableObject& ball){
 			player.position.y = ball.position.y;
 	else if (player.position.y > ball.position.y)
 		player.position.y = ball.position.y;
-	else if (player.position.x < ball.position.x)
+	else if (player.position.x > ball.position.x)
 		player.position.y = player.position.y;
 	/*
 	if(player.position.y < ball.position.y - speed) {
@@ -173,19 +173,20 @@ void seek(movableObject &player, movableObject& ball){
 	*/
 }
 
-void movePlayer(movableObject &player)
+// Controls for player 1
+void movePlayer(moveableObject &player)
 {
 	
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y - 30);
 
 	if(IsKeyDown('S') && (checkCollision(player1, bottom) == false) || IsKeyDown(GLFW_KEY_DOWN) && (checkCollision(player1, bottom) == false)) {
-		int diff = player.position.y;
+		//int diff = player.position.y;
 		player.position.y += speed;
 		//if (checkCollision(player1, bottom) == true)
 			//player.position.y -= 10;
 	}
 	else if (IsKeyDown('W') && (checkCollision(player1, top) == false) || IsKeyDown(GLFW_KEY_UP) && (checkCollision(player1, top) == false)) {
-		int diff = player.position.y;
+		//int diff = player.position.y;
 		player.position.y -= speed;
 		//if (checkCollision(player1, top) == true)
 			//player.position.y += 10;
@@ -316,9 +317,35 @@ void drawMenu() {
 	DrawSprite(bgMenu);
 }
 */
+
+void menu()
+{
+	bool menu = false;
+	int choice;
+	cout << "Welcome to pong. Please select an option." << endl;
+	// loop to keep player in menu state until an option is selected.
+	while (menu == false)
+	{
+		cout << "1. Play" << endl;
+		cout << "2. Exit" << endl;
+		cin >> choice;
+		choice = choice - 1;
+		switch (choice)
+		{
+		case 0: menu = true;
+				break;
+		case 1: exit(EXIT_SUCCESS);
+				break;
+		};
+	}
+}
 // entry point of the program
 int main( int arc, char* argv[] )
 {	
+	while (menuExit == false)	// loop to control menu and game transitions
+	{
+	menu();
+	
 	// First we need to create our Game Framework
 	Initialise(SCREEN_X, SCREEN_Y, false );
 	//bool menuScreen = true;
@@ -332,6 +359,7 @@ int main( int arc, char* argv[] )
 	} while (menuScreen == true);
 	*/
 	do {
+		bool go = g_gameOver;
 		frameCounter++;
 
 		if(frameCounter > 5000)
@@ -342,11 +370,24 @@ int main( int arc, char* argv[] )
 		updateGame();
 
 		drawGame();
+		if (g_gameOver == true) {	// loop to break out of game if game is over
+			break;
+		}
+
 	} while ( FrameworkUpdate() == false );
+	for (int i = 0; i < 50000; i++)	// loop to pause the screen after game over
+				cout << "\n";
 
 	destroyGame();
-	
+	g_gameOver = false;
+	player1Score = 0;	// reset scores
+	player2Score = 0;
+	frameCounter = 0;
+	for (int i = 0; i < 5; i++){
+		g_highScores[i] = 0;
+	}
 	Shutdown();
+	}
 
 	return 0;
 }
